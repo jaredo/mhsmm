@@ -28,7 +28,7 @@ mstep.pois(x, wt)
 
 \seealso{ \code{\link{rpois.hsmm}}, \code{\link{dpois.hsmm}} }
 
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}
 
 
 \examples{

@@ -25,4 +25,4 @@ mstep.norm(x, wt)
   \item{sigma}{Vector of length J containing the variances}
 }
 
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}

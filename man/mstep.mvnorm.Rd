@@ -29,7 +29,7 @@ mstep.mvnorm(x, wt)
 
 \seealso{ \code{\link{dmvnorm.hsmm}}, \code{\link{rmvnorm.hsmm}} }
 
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}
 
 \examples{
   J<-2

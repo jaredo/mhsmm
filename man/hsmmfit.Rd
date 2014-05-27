@@ -31,7 +31,7 @@ http://www.jstatsoft.org/v39/i04/.
 
 Guedon, Y. (2003),  Estimating hidden semi-Markov chains from discrete sequences, 
 	Journal of Computational and Graphical Statistics, Volume 12, Number 3, page 604-639 - 2003 }
-\author{ Jared O'Connell jared@well.ox.ac.uk }
+\author{ Jared O'Connell jaredoconnell@gmail.com }
 \seealso{\code{\link{hsmmspec}},\code{\link{simulate.hsmmspec}},\code{\link{predict.hsmm}}
 }
 \examples{

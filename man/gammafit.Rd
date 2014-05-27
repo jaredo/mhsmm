@@ -18,7 +18,7 @@ gammafit(x, wt = NULL)
   \item{scale}{The scale parameter (equal to 1/rate)}
 }
 \references{Choi, S. and Wette, R. (1969), Maximum likelihood estimation of the parameters of the gamma distribution and their bias, Technometrics, 11, 683-96-690.}
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}
 \examples{
   gammafit(rgamma(1000,shape=10,scale=13))
 }

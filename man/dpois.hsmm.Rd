@@ -25,7 +25,7 @@ dpois.hsmm(x, j, model)
 
 \seealso{ \code{\link{mstep.pois}}, \code{\link{rpois.hsmm}}}
 
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}
 \examples{
   J<-3
   initial <- rep(1/J,J)

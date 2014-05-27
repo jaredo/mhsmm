@@ -23,7 +23,7 @@ rmvnorm.hsmm(j, model)
 }
 \seealso{ \code{\link{dmvnorm.hsmm}}, \code{\link{mstep.mvnorm}} }
 
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}
 \examples{
   J<-2
   initial <- rep(1/J,J)

@@ -17,7 +17,7 @@ sim.mc(init, transition, N)
 \value{
   A vector of integers representing the state sequence.
 }
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}
 \examples{
   p <- matrix(c(.1,.3,.6,rep(1/3,3),0,.5,.5),ncol=3,byrow=TRUE)
   init <- rep(1/3,3)

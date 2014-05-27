@@ -13,4 +13,4 @@
   \item{x}{ A \code{hsmm} object }
   \item{\dots}{ Arguments passed to \code{plot}}
 }
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}

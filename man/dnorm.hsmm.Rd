@@ -22,4 +22,4 @@ dnorm.hsmm(x, j, model)
 \value{
   A vector of probability densities.
 }
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}

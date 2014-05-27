@@ -21,4 +21,4 @@ rnorm.hsmm(j, model)
   A single value from the emission distribution.
 }
 
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}

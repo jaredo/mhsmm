@@ -26,4 +26,4 @@
   train <- simulate(model, nsim=300, seed=1234, rand.emis=rnorm.hsmm)
   plot(train,xlim=c(0,100))
 }
-\author{Jared O'Connell jared@well.ox.ac.uk}
+\author{Jared O'Connell jaredoconnell@gmail.com}
