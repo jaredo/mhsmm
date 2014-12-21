@@ -3,8 +3,8 @@
 % \VignetteKeyword{Hidden Markov Model}
 
 \documentclass{article}
-
-\usepackage{a4wide}
+\usepackage[top=1in,left=1in,bottom=1in,right=1in]{geometry}
+%\usepackage{a4wide}
 \usepackage[T1]{fontenc}
 \usepackage[latin1]{inputenc}
 
