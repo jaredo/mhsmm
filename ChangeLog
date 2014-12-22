@@ -67,7 +67,13 @@
 	* Added more verbose error messages
 	* Minor bug fix
 
-2014-XX-XX Jared O'Connell <jaredoconnell@gmail.com>
+2014-12-21 Jared O'Connell <jaredoconnell@gmail.com>
 	* Version 0.4.13
 	* Fixed typos in documentation
 	* Minor fix to DESCRIPTION encoding
+
+2014-12-22 Jared O'Connell <jaredoconnell@gmail.com>
+	* Version 0.4.14
+	* Fixed problem with title in DESCRIPTION
+
+
