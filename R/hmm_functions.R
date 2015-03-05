@@ -75,7 +75,7 @@ print.hmm <- function(x, ...) {
     list(gamma=matrix(tmp$gam,ncol=K),loglik=tmp$ll)
 }
 
-hmmfit <- function(x,start.val,mstep=mstep.norm,lock.transition=FALSE,tol=1e-08,maxit=1000) 
+hmmfit <- function(x,start.val,mstep=mstep.norm,lock.transition=FALSE,tol=1e-08,maxit=1000)
 {
   model = start.val
   K = nrow(model$trans)
@@ -107,33 +107,35 @@ hmmfit <- function(x,start.val,mstep=mstep.norm,lock.transition=FALSE,tol=1e-08,
   gam = double(K*sum(N))
   for(i in 1:maxit) {  
     p = sapply(1:K,fn <- function(state) f(x,state,model))
-    if(any(apply(p,1,max)==0)) stop("Some values have 0 pdf for all states!  Check your model parameters")
+    if(any(apply(p,1,max)==0)) stop("Some values have pdf=0 for all states!  Check your model parameters")
+    if(any(is.na(p)|p==Inf)) stop("The pdf return NA/NaN/Inf for some values, this indicates a problem with the parameter estimation in the M-step has occurred")
     
-    #estep duh	
-    test = .C("mo_estep_hmm",a=as.double(t(model$transition)),pi=as.double(t(model$init)),p=as.double(t(p)),
+    #e-step
+    estep_out = .C("mo_estep_hmm",a=as.double(t(model$transition)),pi=as.double(t(model$init)),p=as.double(t(p)),
       N=as.integer(N),nsequences=as.integer(NN), K=as.integer(K),
       alpha=double((K+1)*sum(N)) ,beta=double(K*sum(N)),gam=gam,ll=double(1),PACKAGE='mhsmm')
-    #mstep
-    loglik[i]=test$ll                                   
+    #m-step
+    loglik[i]=estep_out$ll                                   
   if(i>1)    if(abs(loglik[i]-loglik[i-1])<tol) break("Converged")
 #    if((loglik[i]-loglik[i-1])<(-tol)) stop(paste("loglikelihood has decreased on iteration",i))
-    gam = matrix(test$gam,ncol=K)
+    gam = matrix(estep_out$gam,ncol=K)
     if(any(colSums(gam)==0)) stop("Error: at least one state has an expected number of occurences equal to 0.\n This may be caused by bad starting parameters are insufficent sample size")
+    if(any(is.na(gam))) stop("Error: one or more of the state probabilities was NA/NaN. This usually means the model is ill-specified for the data")
 
     if(length(formals(mstep))==2) {
       model$parms.emission = mstep(x,gam)
     }
     else if(length(formals(mstep))==4) {
-      alpha = matrix(test$alpha,ncol=K+1)
-      beta = matrix(test$beta,ncol=K)
+      alpha = matrix(estep_out$alpha,ncol=K+1)
+      beta = matrix(estep_out$beta,ncol=K)
       model$parms.emission = mstep(x,gam,alpha,beta)
     }
     else {
       stop("Error: M-step function is invalid.")
     }
     if(!lock.transition) {
-      model$transition=matrix(test$a,nrow=K,byrow=TRUE)
-      model$init=test$pi
+      model$transition=matrix(estep_out$a,nrow=K,byrow=TRUE)
+      model$init=estep_out$pi
       model$init[model$init<0]=0
       model$transition[model$transition<0]=0
     }

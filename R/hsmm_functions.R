@@ -338,7 +338,7 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
   for(it in 1:maxit) {
     if(graphical)   plot.hsmm(list(model=new.model,J=J))
     p = sapply(1:J,function(state) f(x,state,new.model))
-    if(any(is.na(p))) stop("NAs detected in b(x), check your supplied density function")
+    if(any(is.na(p)|p==Inf)) stop("NAs detected in b(x), check your supplied density function")
     if(any(apply(p,1,max)==0)) stop("Some values have 0 pdf for all states!  Check your model parameters")
     
 #    print(paste("Iteration",it))
