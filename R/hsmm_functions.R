@@ -540,7 +540,7 @@ predict.hsmm <- function(object,newdata,method="viterbi",...) {
                 psi_state0=integer(N[i]*J),
                 psi_time0=integer(N[i]*J)          
                 ,PACKAGE='mhsmm')
-    loglik=loglik+max(tmp$alpha[N[i]*(1:3)])
+    loglik=loglik+max(tmp$alpha[N[i]*(1:J)])
     statehat[(NN[i]+1):NN[i+1]] = tmp$statehat+1
   }
   ans <- list(x=x,s=statehat,N=N,loglik=loglik)
