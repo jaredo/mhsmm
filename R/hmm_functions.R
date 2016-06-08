@@ -72,7 +72,7 @@ print.hmm <- function(x, ...) {
     tmp = .C("mo_estep_hmm",a=as.double(t(model$transition)),pi=as.double(t(model$init)),p=as.double(t(p)),N=as.integer(x$N),nsequences=as.integer(length(x$N)),
       K=as.integer(K),
       alpha=double((K+1)*sum(N)) ,beta=double(K*sum(N)),gam=double(K*sum(N)),ll=double(1),PACKAGE='mhsmm')      
-    list(gamma=matrix(tmp$gam,ncol=K),loglik=tmp$ll)
+    list(posterior_state_prob=matrix(tmp$gam,ncol=K),loglik=tmp$ll)
 }
 
 hmmfit <- function(x,start.val,mstep=mstep.norm,lock.transition=FALSE,tol=1e-08,maxit=1000)
@@ -181,8 +181,8 @@ predict.hmm <- function(object,newdata,method="viterbi",...) {
   }
   else if(method=="smoothed") {
     tmp <- .estep.hmm(x,object)
-    yhat <- apply(tmp$gamma,1,which.max)
-    ans <- list(s=yhat,x=x$x,N=x$N,p=tmp$gamma,loglik=tmp$loglik)
+    yhat <- apply(tmp$posterior_state_prob,1,which.max)
+    ans <- list(s=yhat,x=x$x,N=x$N,p=tmp$posterior_state_prob,loglik=tmp$loglik)
   }
   else stop("Unavailable prediction method")
   class(ans) <- "hsmm.data"
