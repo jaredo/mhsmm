@@ -107,8 +107,8 @@ hmmfit <- function(x,start.val,mstep=mstep.norm,lock.transition=FALSE,tol=1e-08,
   gam = double(K*sum(N))
   for(i in 1:maxit) {  
     p = sapply(1:K,fn <- function(state) f(x,state,model))
-    if(any(apply(p,1,max)==0)) stop("Some values have pdf=0 for all states!  Check your model parameters")
-    if(any(is.na(p)|p==Inf)) stop("The pdf return NA/NaN/Inf for some values, this indicates a problem with the parameter estimation in the M-step has occurred")
+    if(any(apply(p,1,max)==0)) stop("Some values have emission pdf=0 for all states!  Check your model parameters")
+    if(any(is.na(p)|p==Inf)) stop("The emission pdf returned NA/NaN/Inf for some values, this indicates a problem with the parameter estimation in the M-step has occurred")
     
     #e-step
     estep_out = .C("mo_estep_hmm",a=as.double(t(model$transition)),pi=as.double(t(model$init)),p=as.double(t(p)),
