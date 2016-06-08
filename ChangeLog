@@ -1,4 +1,4 @@
-2009-03-02 Søren Højsgaard <sorenh@math.aau.dk>
+2009-03-02 SÃ¸ren HÃ¸jsgaard <sorenh@math.aau.dk>
 	* mhsmm package version 0.1.0 submitted to CRAN
 
 2009-03-31 Jared O'Connell <jared@well.ox.ac.uk>
@@ -21,7 +21,7 @@
 	*changed some argument names to more sensible ones
 	*cleaned up documentation
 
-2010-07-14 Søren Højsgaard <sorenh@math.aau.dk>
+2010-07-14 SÃ¸ren HÃ¸jsgaard <sorenh@math.aau.dk>
 	* smooth.discrete function added
 	* a vignette on smooth.discrete added.
 
@@ -37,7 +37,7 @@
 2011-06-16 Jared O'Connell <jared@well.ox.ac.uk>	
 	* fixed memory problem in predict.hsmm
 
-2011-03-06 Søren Højsgaard <sorenh@math.aau.dk>
+2011-03-06 SÃ¸ren HÃ¸jsgaard <sorenh@math.aau.dk>
 	* JSS paper on the mhsmm package published
 	* Version 0.4.0 submitted to CRAN
 
@@ -76,4 +76,7 @@
 	* Version 0.4.14
 	* Fixed problem with title in DESCRIPTION
 
+2016-06-08 Jared O'Connell <jaredoconnell@gmail.com>
+	* Better reporting of convergence problems
+	* Renamed some variables to reduce ambiguity
 
