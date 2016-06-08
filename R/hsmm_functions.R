@@ -365,18 +365,18 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
 #M-Step
 
 #    N.debug[[it]] = B$N
-    if(any(is.nan(B$gamma))) {
+    if(any(is.nan(B$posterior_state_prob))) {
       warning("NaNs detected in gamma.  Exiting...")
       return(B)
     }
-    if(any(B$gamma<0)) B$gamma = zapsmall(B$gamma)      
+    if(any(B$posterior_state_prob<0)) B$posterior_state_prob = zapsmall(B$posterior_state_prob)      
     if(any(B$eta<0)) B$eta = zapsmall(B$eta)      
     if(any(B$N<0))  B$N = zapsmall(B$N)
 
-#     if(any(apply(matrix(B$gamma,ncol=J),2,function(gamma) all(gamma==0)))) stop("all negative gamma detected.  Exiting...")
+#     if(any(apply(matrix(B$posterior_state_prob,ncol=J),2,function(gamma) all(gamma==0)))) stop("all negative gamma detected.  Exiting...")
      old.model = new.model
-#     new.model = list(parms.emission=mstep(x,matrix(B$gamma,ncol=J)))
-    state_wt <- matrix(B$gamma,ncol=J)
+#     new.model = list(parms.emission=mstep(x,matrix(B$posterior_state_prob,ncol=J)))
+    state_wt <- matrix(B$posterior_state_prob,ncol=J)
     if(any(colSums(state_wt)==0)) stop("Error: at least one state has an expected number of occurences equal to 0.\n This may be caused by bad starting parameters are insufficent sample size")
     new.model$parms.emission = mstep(x,state_wt)
 
@@ -478,14 +478,14 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
      }
 #     if(any(is.na(
      ll[it]=sum(log(B$N))
-     #mstep(x,matrix(B$gamma,ncol=J),J,NROW(x))
+     #mstep(x,matrix(B$posterior_state_prob,ncol=J),J,NROW(x))
      new.model$J = J
      if(it>2) if(abs(ll[it]-ll[it-1])<tol) break()
   }
   ## new.model$dens.emssion <- f
   ## new.model$sojourn$type = sojourn.distribution
   class(new.model) <- "hsmmspec"
-  ret = list(loglik=ll[!is.na(ll)],model=new.model,B=B,M=M,J=J,NN=NN,f=f,mstep=mstep,yhat=apply(matrix(B$gamma,ncol=J),1,which.max))#,N.debug=N.debug)
+  ret = list(loglik=ll[!is.na(ll)],model=new.model,B=B,M=M,J=J,NN=NN,f=f,mstep=mstep,yhat=apply(matrix(B$posterior_state_prob,ncol=J),1,which.max))#,N.debug=N.debug)
   class(ret) <- "hsmm"
   ret
 }
@@ -550,7 +550,7 @@ predict.hsmm <- function(object,newdata,method="viterbi",...) {
    m <- object$model
    m$dens.emission <- object$f
    tmp <- hsmmfit(x,m,object$mstep,maxit=1,M=M)
-   ans <- list(x=x$x,s=tmp$yhat,N=x$N,p=matrix(tmp$B$gamma,ncol=object$J))
+   ans <- list(x=x$x,s=tmp$yhat,N=x$N,p=matrix(tmp$B$posterior_state_prob,ncol=object$J))
   }
   else stop(paste("Unavailable prediction method",method))
     
