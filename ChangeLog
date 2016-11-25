@@ -80,3 +80,7 @@
 	* Better reporting of convergence problems
 	* Renamed some variables to reduce ambiguity
 
+2016-11-25 Jared O'Connell <jaredoconnell@gmail.com>
+	* adding travis tests
+
+
