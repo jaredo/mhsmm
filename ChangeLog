@@ -88,4 +88,5 @@
 
 2017-01-14 Jared O'Connell <jaredoconnell@gmail.com>
 	* fixed a minor bug where estimated non-parametric sojourn distribution was not propagated in hsmmfit output
+	* version 0.4.15
 
