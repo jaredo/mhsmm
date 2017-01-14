@@ -76,6 +76,9 @@
 	* Version 0.4.14
 	* Fixed problem with title in DESCRIPTION
 
+2016-03-11 Jared O'Connell <jaredoconnell@gmail.com>
+	* bugfix in likelihood calculation in predict.hsmm
+
 2016-06-08 Jared O'Connell <jaredoconnell@gmail.com>
 	* Better reporting of convergence problems
 	* Renamed some variables to reduce ambiguity
@@ -83,4 +86,6 @@
 2016-11-25 Jared O'Connell <jaredoconnell@gmail.com>
 	* adding travis tests
 
+2017-01-14 Jared O'Connell <jaredoconnell@gmail.com>
+	* fixed a minor bug where estimated non-parametric sojourn distribution was not propagated in hsmmfit output
 
