@@ -1,4 +1,3 @@
-export(simulate)
                                         # Export all names
 exportPattern("^[^\\.]")
 # Import all packages listed as Imports or Depends
@@ -14,6 +13,7 @@ importFrom(stats, approx, cov.wt, density, dgamma, dlnorm,
            rnbinom, rnorm, rpois, ts, uniroot,
            weighted.mean)
 importFrom(utils, head, str, tail)
+importFrom(stats,simulate)
 
 S3method(plot,hsmm)
 S3method(plot,hsmm.data)
