@@ -53,3 +53,7 @@ dnorm.hsmm <- function(x,j,model) {
 }
 
 rnorm.hsmm <- function(j,model)  rnorm(1,model$parms.emission$mu[j],sqrt(model$parms.emission$sigma[j]))
+
+simulate <- function (object, ...) {
+   UseMethod("simulate", object)
+}
