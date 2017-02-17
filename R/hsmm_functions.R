@@ -82,7 +82,7 @@ simulate.hsmmspec <- function(object, nsim, seed=NULL,rand.emission=NULL,...)
     right.truncate=left.truncate=0
     if(!is.null(seed)) set.seed(seed)
     if(is.null(rand.emission)&is.null(object$rand.emission)) stop("rand.emission not specified")
-    if(!is.null(rand.emission)) object$rand.emission=rand.emission
+    if(is.null(rand.emission)) rand.emission=object$rand.emission
     
     if(length(nsim)==1) {
         s0 = sim.mc(object$init,object$transition, nsim)
