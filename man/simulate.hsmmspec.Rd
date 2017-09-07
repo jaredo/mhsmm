@@ -11,14 +11,14 @@
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{ A \code{hsmmspec} object }
-  \item{nsim}{An integer or vector of integers (for multiple sequences) specifying the length of the sequence(s) }
+  \item{nsim}{An integer or vector of integers (for multiple sequences) specifying the number of states to generate per sequence }
   \item{seed}{ \code{seed} for the random number generator}
   \item{rand.emission}{The function used to generate observations from the emission distribution}
   \item{\dots}{further arguments passed to or from other methods.}
 
 }
 \details{
-  If \code{nsim} is a single integer then a HSMM of that length is produced.  If \code{nsim} is a vector of integers, then \code{length(nsim)} sequences are generated with respective lengths.
+  If \code{nsim} is a single integer then a HSMM of that length is produced.  If \code{nsim} is a vector of integers, then \code{length(nsim)} sequences are generated with respective lengths. Note thate length is the number of states visited, each state will have a sojourn time typically >1 so the vector will be longer than \code{nsim}
 }
 \value{
   An object of class hmmdata
