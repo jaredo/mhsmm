@@ -21,7 +21,7 @@
 }
 \value{
   Returns a \code{hsmm.data} object, suitable for plotting.
-  \item{newdata }{A vector or data.frame of observations}
+  \item{newdata }{A vector or list of observations}
   \item{s }{A vector containing the reconstructed state sequence}
   \item{N }{The lengths of each sequence}
   \item{p }{A matrix where the rows represent time steps and the columns are the probability for the respective state (only produced when \code{method="smoothed"})}
