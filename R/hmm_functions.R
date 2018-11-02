@@ -11,7 +11,7 @@ print.hmmspec <- function(x, ...){
   return(invisible(x))
 }
 
-summary.hmm <- function (object, ...) 
+summary.hmm <- function (object, ...)
 {
     cat("init: \n", round(object$model$init, 3), "\n")
 
@@ -28,11 +28,11 @@ simulate.hmmspec <- function(object, nsim, seed=NULL, rand.emission=NULL,...) {
   if(!is.null(seed)) set.seed(seed)
   if(is.null(rand.emission)&is.null(object$rand.emission)) stop("rand.emission not specified")
   if(is.null(rand.emission)) rand.emission=object$rand.emission
-  
+
   if(length(nsim)==1) {
    s1 = sim.mc(object$init,object$transition, nsim)
    x = sapply(s1, rand.emission, model=object)
-    if (NCOL(x) > 1) 
+    if (NCOL(x) > 1)
         ret = list(s = s1, x = t(x), N = nsim)
     else ret = list(s = s1, x = x, N = nsim)
    class(ret) <- "hsmm.data"
@@ -48,7 +48,7 @@ simulate.hmmspec <- function(object, nsim, seed=NULL, rand.emission=NULL,...) {
   else ret = list(s=s1,x=x,N=N)
 
   class(ret) <- "mhsmm.data"
-  ret                                            
+  ret
 }
 
 hmmspec <- function(init, trans, parms.emission, dens.emission, rand.emission=NULL, mstep=NULL) {
@@ -71,11 +71,11 @@ print.hmm <- function(x, ...) {
     p = sapply(1:K,fn <- function(state) object$f(x$x,state,model))
     tmp = .C("mo_estep_hmm",a=as.double(t(model$transition)),pi=as.double(t(model$init)),p=as.double(t(p)),N=as.integer(x$N),nsequences=as.integer(length(x$N)),
       K=as.integer(K),
-      alpha=double((K+1)*sum(N)) ,beta=double(K*sum(N)),gam=double(K*sum(N)),ll=double(1),PACKAGE='mhsmm')      
+      alpha=double((K+1)*sum(N)) ,beta=double(K*sum(N)),gam=double(K*sum(N)),ll=double(1),PACKAGE='mhsmm')
     list(posterior_state_prob=matrix(tmp$gam,ncol=K),loglik=tmp$ll)
 }
 
-hmmfit <- function(x,start.val,mstep=mstep.norm,lock.transition=FALSE,tol=1e-08,maxit=1000)
+hmmfit <- function(x,start.val,mstep=NULL,lock.transition=FALSE,tol=1e-08,maxit=1000)
 {
   model = start.val
   K = nrow(model$trans)
@@ -87,35 +87,35 @@ hmmfit <- function(x,start.val,mstep=mstep.norm,lock.transition=FALSE,tol=1e-08,
     N = NN = x$N
     x = x$x
   }
-  
-  if(K<2) stop("K must be larger than one.")	
+
+  if(K<2) stop("K must be larger than one.")
   if(any(dim(model$trans)!=K)) stop("dimensions of a incorrect")
   if(length(model$init)!=K) stop("dimensions of st incorrect")
   if(NROW(x)!=sum(N)) stop("dimensions incorrect")
   if(length(N)==1) NN=1
   else NN = length(N)
-  
-  if(is.null(mstep)) 
+
+  if(is.null(mstep))
     if(is.null(model$mstep)) stop("mstep not specified")
-    else  mstep=model$mstep      
+    else  mstep=model$mstep
 
   f=model$dens.emission
 
   loglik=numeric(maxit)
   loglik=NA
-  loglik[1]=-Inf  
+  loglik[1]=-Inf
   gam = double(K*sum(N))
-  for(i in 1:maxit) {  
+  for(i in 1:maxit) {
     p = sapply(1:K,fn <- function(state) f(x,state,model))
     if(any(apply(p,1,max)==0)) stop("Some values have emission pdf=0 for all states!  Check your model parameters")
     if(any(is.na(p)|p==Inf)) stop("The emission pdf returned NA/NaN/Inf for some values, this indicates a problem with the parameter estimation in the M-step has occurred")
-    
+
     #e-step
     estep_out = .C("mo_estep_hmm",a=as.double(t(model$transition)),pi=as.double(t(model$init)),p=as.double(t(p)),
       N=as.integer(N),nsequences=as.integer(NN), K=as.integer(K),
       alpha=double((K+1)*sum(N)) ,beta=double(K*sum(N)),gam=gam,ll=double(1),PACKAGE='mhsmm')
     #m-step
-    loglik[i]=estep_out$ll                                   
+    loglik[i]=estep_out$ll
   if(i>1)    if(abs(loglik[i]-loglik[i-1])<tol) break("Converged")
 #    if((loglik[i]-loglik[i-1])<(-tol)) stop(paste("loglikelihood has decreased on iteration",i))
     gam = matrix(estep_out$gam,ncol=K)
@@ -139,10 +139,10 @@ hmmfit <- function(x,start.val,mstep=mstep.norm,lock.transition=FALSE,tol=1e-08,
       model$init[model$init<0]=0
       model$transition[model$transition<0]=0
     }
-  }  
+  }
   ret = list(model=model,K=K,f=f,mstep=mstep,gam=gam,loglik=loglik[!is.na(loglik)],N=N,p=gam,yhat=apply(gam,1,which.max))
   class(ret) <- "hmm"
-  return(ret)	
+  return(ret)
 }
 
 
@@ -155,7 +155,7 @@ predict.hmm <- function(object,newdata,method="viterbi",...) {
   	if(N<1) stop("N less than one")
   	x=list(x=x,N=NROW(x))
   }
-  nseq=length(x$N) 
+  nseq=length(x$N)
   	N = x$N
   	NN = cumsum(c(0,x$N))
   if(method=="viterbi") {
@@ -192,5 +192,5 @@ predict.hmm <- function(object,newdata,method="viterbi",...) {
 predict.hmmspec <- function(object,newdata,method="viterbi",...) {
   object2 <- list(model=object,K=object$J,f=object$dens.emission)
   class(object2) <- "hmm"
-  predict(object2,newdata,method,...)  
+  predict(object2,newdata,method,...)
 }
