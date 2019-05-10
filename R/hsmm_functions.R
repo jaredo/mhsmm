@@ -12,7 +12,7 @@ print.hsmmspec <- function(x, ...){
     return(invisible(x))
 }
 
-.fitnbinom <- function(eta) {  
+.fitnbinom <- function(eta) {
     shiftthresh=1e-20
     maxshift =  match(TRUE,eta>shiftthresh)
     Mtmp = tail(which(eta>shiftthresh),1)
@@ -21,15 +21,15 @@ print.hsmmspec <- function(x, ...){
         m <- weighted.mean((maxshift:Mtmp)-shift,eta[maxshift:Mtmp])
         v <- as.numeric(cov.wt(data.frame((maxshift:Mtmp)-shift),wt=eta[maxshift:Mtmp])$cov)
         size <- if (v > m) m^2/(v - m) else 100
-        densfun <- function(par) sum(dnbinom((maxshift:Mtmp)-shift,size=par[1],mu=par[2],log=TRUE)*eta[maxshift:Mtmp])    
+        densfun <- function(par) sum(dnbinom((maxshift:Mtmp)-shift,size=par[1],mu=par[2],log=TRUE)*eta[maxshift:Mtmp])
         optim(c(size,m),densfun,control=list(fnscale=-1))$value
     }
-    
+
     shift = which.max(sapply(1:maxshift,fun1))
     m <- weighted.mean((maxshift:Mtmp)-shift,eta[maxshift:Mtmp])
     v <- as.numeric(cov.wt(data.frame((maxshift:Mtmp)-shift),wt=eta[maxshift:Mtmp])$cov)
     size <- if (v > m) m^2/(v - m) else 100
-    densfun <- function(par) sum(dnbinom((maxshift:Mtmp)-shift,size=par[1],mu=par[2],log=TRUE)*eta[maxshift:Mtmp])        
+    densfun <- function(par) sum(dnbinom((maxshift:Mtmp)-shift,size=par[1],mu=par[2],log=TRUE)*eta[maxshift:Mtmp])
     tmp = optim(c(size,m),densfun,control=list(fnscale=-1))$par
     c(shift = shift,size=tmp[1],mu=tmp[2],prob=tmp[1]/(sum(tmp)))
 }
@@ -39,17 +39,17 @@ print.hsmmspec <- function(x, ...){
     if(shift<0) stop(".dnbinom.hsmm.sojourn: shift must be > 0")
     if(is.null(mu)){
         if(log) dnbinom(x-shift,size,prob,log=TRUE)
-        else dnbinom(x-shift,size,prob)  
+        else dnbinom(x-shift,size,prob)
     }
     else {
         if(log) dnbinom(x-shift,size=size,mu=mu,log=TRUE)
-        else dnbinom(x-shift,size=size,mu=mu)    
+        else dnbinom(x-shift,size=size,mu=mu)
     }
 }
 
 .rnbinom.hsmm.sojourn <- function(n,size,prob,shift) {
     if(shift<0) stop(".dnbinom.hsmm.sojourn: shift must be > 0")
-    rnbinom(n,size,prob) + shift 
+    rnbinom(n,size,prob) + shift
 }
 
 
@@ -62,7 +62,7 @@ print.hsmmspec <- function(x, ...){
     if(!is.null(object$sojourn$d)) if(NCOL(object$sojourn$d)!=nrow(object$transition)) stop("Inconsistent sojourn d")
     if(length(object$init)!=NROW(object$transition))    stop('length(init)!=NROW(transition)')
     if(NROW(object$transition)!=NCOL(object$transition)) stop('NROW(transition)!=NCOL(transition)')
-    if(!isTRUE(all.equal(sum(diag(object$transition)),0))) stop('non-zero entry on diagonal of transition matrix')  
+    if(!isTRUE(all.equal(sum(diag(object$transition)),0))) stop('non-zero entry on diagonal of transition matrix')
 }
 
 hsmmspec <- function(init,transition,parms.emission,sojourn,dens.emission,rand.emission=NULL,mstep=NULL) {
@@ -74,7 +74,7 @@ hsmmspec <- function(init,transition,parms.emission,sojourn,dens.emission,rand.e
     ans = list(J=length(init),init=init,transition=transition,parms.emission=parms.emission,sojourn=sojourn,rand.emission=rand.emission,dens.emission=dens.emission,mstep=mstep)
     class(ans) <- 'hsmmspec'
     .check.hsmmspec(ans)
-    ans  
+    ans
 }
 
 simulate.hsmmspec <- function(object, nsim, seed=NULL,rand.emission=NULL,...)
@@ -83,7 +83,7 @@ simulate.hsmmspec <- function(object, nsim, seed=NULL,rand.emission=NULL,...)
     if(!is.null(seed)) set.seed(seed)
     if(is.null(rand.emission)&is.null(object$rand.emission)) stop("rand.emission not specified")
     if(is.null(rand.emission)) rand.emission=object$rand.emission
-    
+
     if(length(nsim)==1) {
         s0 = sim.mc(object$init,object$transition, nsim)
         if (object$sojourn$type == "poisson") {
@@ -93,7 +93,7 @@ simulate.hsmmspec <- function(object, nsim, seed=NULL,rand.emission=NULL,...)
         }
         else if (object$sojourn$type == "gamma") {
                                         #        object$d = matrix(nrow = M, ncol = object$J)
-                                        #        for (i in 1:object$J) object$d[, i] = dgamma(1:M, object$sojourn$shape[i], 
+                                        #        for (i in 1:object$J) object$d[, i] = dgamma(1:M, object$sojourn$shape[i],
                                         #            scale = object$sojourn$scale[i])
             fn <- function(ii) rgamma(1,shape=object$sojourn$shape[ii],scale=object$sojourn$scale[ii])
         }
@@ -101,23 +101,23 @@ simulate.hsmmspec <- function(object, nsim, seed=NULL,rand.emission=NULL,...)
                                         #        object$d = matrix(nrow = M, ncol = object$J)
                                         #        for (i in 1:object$J) {
                                         #          object$d[, i] = dlnorm(1:M, object$sojourn$meanlog[i],object$sojourn$s.dlog[i])
-                                        #          object$d[, i] = object$d[, i]/sum(object$d[, i])          
-                                        #        }        
-                                        #    }    
+                                        #          object$d[, i] = object$d[, i]/sum(object$d[, i])
+                                        #        }
+                                        #    }
         else if (object$sojourn$type == "logarithmic") {
                                         #        object$d = matrix(nrow = M, ncol = object$J)
                                         #        for (i in 1:object$J) object$d[, i] = .dlog(1:M,object$sojourn$shape[i])
-            fn <- function(ii) .rlog(1,object$sojourn$p[ii])        
+            fn <- function(ii) .rlog(1,object$sojourn$p[ii])
         }
                                         #    else if (object$sojourn$type == "nbinom") {
                                         #        object$d = matrix(nrow = M, ncol = object$J)
                                         #        for (i in 1:object$J) object$d[, i] = .dnbinom.hsmm.sojourn(1:M,object$sojourn$size[i],object$sojourn$prob[i],object$sojourn$shift[i])
-                                        #    }    
+                                        #    }
         else if (object$sojourn$type == "nonparametric") {
             fn <- function(ii) sample(1:nrow(object$sojourn$d), 1, prob = object$sojourn$d[,ii])
         }
         else stop("Unknown sojourn distribution")
-        
+
         u = as.integer(round(sapply(s0, fn)))
         s1 = rep(s0, u)[(left.truncate + 1):(sum(u) - right.truncate)]
         x = sapply(s1,function(i) rand.emission(i,object))
@@ -150,8 +150,8 @@ simulate.hsmmspec <- function(object, nsim, seed=NULL,rand.emission=NULL,...)
         model$d = matrix(nrow = M, ncol = model$J)
         for (i in 1:model$J) {
             model$d[, i] = dlnorm(1:M, model$sojourn$meanlog[i],model$sojourn$s.dlog[i])
-            model$d[, i] = model$d[, i]/sum(model$d[, i])          
-        }                
+            model$d[, i] = model$d[, i]/sum(model$d[, i])
+        }
     }
     else if (sojourn.distribution == "logarithmic") {
         model$d = matrix(nrow = M, ncol = model$J)
@@ -166,17 +166,17 @@ simulate.hsmmspec <- function(object, nsim, seed=NULL,rand.emission=NULL,...)
     }
     else stop("Unknown sojourn distribution")
 
-    
+
     fn <- function(ii) sample(1:nrow(model$d),1,prob=model$d[,ii])
-    u = sapply(s0,fn) #simulate the waiting times  
-    
+    u = sapply(s0,fn) #simulate the waiting times
+
     s1 = rep(s0,u)[(left.truncate+1):(sum(u)-right.truncate)] #simulate actual state sequence
 
     NN = N
     tmp = cumsum(c(1,N))
     for(i in 1:(length(tmp)-1))
         NN[i] = sum(u[tmp[i]:(tmp[i+1]-1)])
-    
+
 
     x = sapply(s1,emission,model) #simulate the observed state sequence
     if(NCOL(x)>1) ret = list(s=s1,x=t(x),N=NN)
@@ -193,7 +193,7 @@ simulate.hsmmspec <- function(object, nsim, seed=NULL,rand.emission=NULL,...)
     xbar = sum(wt*(1:length(wt)))
     fn <- function(p) xbar + p/((1-p)*log(1-p))
     uniroot(fn,c(1e-10,1-1e-10))$root
-}      
+}
 
                                         #estimates gamma distribution parameters using method of moments
 gammafit <- function(x,wt=NULL) {
@@ -204,11 +204,11 @@ gammafit <- function(x,wt=NULL) {
     tmp = cov.wt(data.frame(x),wt=wt)
     xhat = tmp$center
     xs = sqrt(tmp$cov)
-    s = log(xhat) - mean(weighted.mean(log(x),wt))    
+    s = log(xhat) - mean(weighted.mean(log(x),wt))
     aold = (xhat/xs)^2
     a = Inf
     while(abs(a-aold)>tol) {
-        a = aold - (log(aold) - digamma(aold) - s)/((1/aold) - trigamma(aold))        
+        a = aold - (log(aold) - digamma(aold) - s)/((1/aold) - trigamma(aold))
         aold=a
     }
     return(list(shape=a,scale=xhat/a))
@@ -249,17 +249,17 @@ sim.mc <- function(init,transition,N) {
         if(is.null(model$sojourn$d)) {
             if(is.null(model$sojourn$lambda)) stop('Invalid waiting parameters supplied')
             if(is.null(model$sojourn$shift)) stop('No shift parameter provided for Poisson sojourn distribution (must be at least 1)')
-            model$d = matrix(nrow=M,ncol=model$J)  	
+            model$d = matrix(nrow=M,ncol=model$J)
             for(i in 1:J) model$d[,i] = .dpois.hsmm.sojourn(1:M,model$sojourn$lambda[i],model$sojourn$shift[i])
         }
         else
             for(i in 1:J) model$d = model$sojourn$d
     }
-    
+
     if(sojourn.distribution=="lnorm") {
         if(is.null(model$sojourn$d)) {
             if(is.null(model$sojourn$meanlog) | is.null(model$sojourn$s.dlog)) stop('Invalid waiting parameters supplied')
-            model$d = matrix(nrow=M,ncol=model$J)  	
+            model$d = matrix(nrow=M,ncol=model$J)
             for(i in 1:J) model$d[,i] = dlnorm(1:M,model$sojourn$meanlog[i],model$sojourn$s.dlog[i])
         }
         else
@@ -272,11 +272,11 @@ sim.mc <- function(init,transition,N) {
                 stop('Invalid waiting parameters supplied')
             else model$d = model$sojourn$d
         }
-        else {    
+        else {
             model$d = matrix(nrow=M,ncol=model$J)
             for(i in 1:J) model$d[,i] = dgamma(1:M,shape=model$sojourn$shape[i],scale=model$sojourn$scale[i])
         }
-    }  
+    }
 
     if(sojourn.distribution=="logarithmic") {
         if(is.null(model$sojourn$shape)) {
@@ -284,12 +284,12 @@ sim.mc <- function(init,transition,N) {
                 stop('Invalid waiting parameters supplied')
             else model$d = model$sojourn$d
         }
-        else {    
+        else {
             model$d = matrix(nrow=M,ncol=model$J)
             for(i in 1:J) model$d[,i] = .dlog(1:M,model$sojourn$shape[i])
         }
-    }  
-    
+    }
+
     if (sojourn.distribution == "nbinom") {
         model$d = matrix(nrow = M, ncol = J)
         if(is.null(model$sojourn$mu))    for (i in 1:J) model$d[, i] = .dnbinom.hsmm.sojourn(1:M,size=model$sojourn$size[i],prob=model$sojourn$prob[i],shift=model$sojourn$shift[i])
@@ -308,28 +308,28 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
     shiftthresh = 1e-20 #threshold for effective "0" when considering d(u)
     J = nrow(model$transition)
     model$J = J
-    
-    if(is.null(mstep)) 
+
+    if(is.null(mstep))
         if(is.null(model$mstep)) stop("mstep not specified")
-        else  mstep=model$mstep      
+        else  mstep=model$mstep
 
     .check.hsmmspec(model)
-    
+
     f=model$dens.emission
 
     if(mode(x)=="numeric" | mode(x)=="integer") {
         warning('x is a primitive vector.  Assuming single sequence.')
-        NN = NROW(x)    
+        NN = NROW(x)
     }
     else{
         NN = x$N
         x = x$x
     }
-    if(is.na(M)) M = max(NN)      
+    if(is.na(M)) M = max(NN)
     if(length(model$init)!=J) stop("length(model$init)!=J")
     if(NROW(x)!=sum(NN)) stop("NROW(x)!=sum(NN)")
     model <- .build_d(model,M)
-    
+
     new.model = model
     ll = rep(NA,maxit)
     rm(model)
@@ -340,27 +340,27 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
         print(range(p))
         if(any(is.na(p)|p==Inf)) stop("NAs detected in b(x), check your supplied density function")
         if(any(apply(p,1,max)==0)) stop("Some values have 0 pdf for all states!  Check your model parameters")
-        
+
                                         #    print(paste("Iteration",it))
                                         # E-STEP
         estep_variables  = .C("backward",
-                transition=as.double(new.model$transition),
-                init=as.double(new.model$init),
-                p=as.double(p),
-                d=as.double(new.model$d),
-                D=as.double(new.model$D),
-                timelength=as.integer(NN),
-                J=as.integer(J),
-                M=as.integer(rep(M,J)),
-                L1 = double(NROW(x)*J),N = double(NROW(x)),
-                eta = double(M*J),
-                F1=double(J*NROW(x)),
-                si=double(J*NROW(x)),
-                gamma=double(J*NROW(x)),
-                nsequences=as.integer(length(NN)),
-                totallength=NROW(x),
-                G=double(J*NROW(x)),
-                PACKAGE='mhsmm')
+                              transition=as.double(new.model$transition),
+                              init=as.double(new.model$init),
+                              p=as.double(p),
+                              d=as.double(new.model$d),
+                              D=as.double(new.model$D),
+                              timelength=as.integer(NN),
+                              J=as.integer(J),
+                              M=as.integer(rep(M,J)),
+                              L1 = double(NROW(x)*J),N = double(NROW(x)),
+                              eta = double(M*J),
+                              F1=double(J*NROW(x)),
+                              si=double(J*NROW(x)),
+                              gamma=double(J*NROW(x)),
+                              nsequences=as.integer(length(NN)),
+                              totallength=NROW(x),
+                              G=double(J*NROW(x)),
+                              PACKAGE='mhsmm')
 
                                         #M-Step
 
@@ -369,8 +369,8 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
             warning("NaNs detected in gamma.  Exiting...")
             return(estep_variables)
         }
-        if(any(estep_variables$gamma<0)) estep_variables$gamma = zapsmall(estep_variables$gamma)      
-        if(any(estep_variables$eta<0)) estep_variables$eta = zapsmall(estep_variables$eta)      
+        if(any(estep_variables$gamma<0)) estep_variables$gamma = zapsmall(estep_variables$gamma)
+        if(any(estep_variables$eta<0)) estep_variables$eta = zapsmall(estep_variables$eta)
         if(any(estep_variables$N<0))  estep_variables$N = zapsmall(estep_variables$N)
 
 
@@ -389,37 +389,37 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
                 new.model$sojourn$d <- new.model$d
             }
             else if(sojourn.distribution=="ksmoothed-nonparametric") {
-                new.model$d = apply(matrix(estep_variables$eta+1e-100,ncol=J),2,function(x) x/sum(x))    
+                new.model$d = apply(matrix(estep_variables$eta+1e-100,ncol=J),2,function(x) x/sum(x))
                 for(i in 1:J) {
                     new.model$d[,i] = approx(density(which(new.model$d[,i]>ksmooth.thresh),weights=new.model$d[which(new.model$d[,i]>ksmooth.thresh),i],from=1,n=M),xout=1:M)$y
                     new.model$d[is.na(new.model$d[,i]),i] = 0
                     new.model$d[,i] = (new.model$d[,i]+1e-300)/sum(new.model$d[,i])
                 }
-                new.model$sojourn$d <- new.model$d                
+                new.model$sojourn$d <- new.model$d
             }
-            
+
             else if(sojourn.distribution=="poisson") {
                 new.model$d = apply(matrix(estep_variables$eta,ncol=J),2,function(x) x/sum(x))
                 new.model$sojourn$lambda = numeric(J)
-                new.model$sojourn$shift = numeric(J)            
+                new.model$sojourn$shift = numeric(J)
                 for(i in 1:J) {
                     eta = new.model$d[,i]
                     maxshift =  match(TRUE,eta>shiftthresh)
                     Mtmp = tail(which(eta>shiftthresh),1)
                     new.model$sojourn$shift[i] = which.max(sapply(1:maxshift, function(shift) .dpois.hsmm.sojourn(x = maxshift:Mtmp,lambda=((maxshift:Mtmp)-shift)%*%eta[maxshift:Mtmp],shift=shift,log=TRUE)%*%eta[maxshift:Mtmp]))
-                    new.model$sojourn$lambda[i] = ((new.model$sojourn$shift[i]:Mtmp)-new.model$sojourn$shift[i])%*%eta[new.model$sojourn$shift[i]:Mtmp]         
+                    new.model$sojourn$lambda[i] = ((new.model$sojourn$shift[i]:Mtmp)-new.model$sojourn$shift[i])%*%eta[new.model$sojourn$shift[i]:Mtmp]
                     new.model$d[,i] = .dpois.hsmm.sojourn(1:M,new.model$sojourn$lambda[i],new.model$sojourn$shift[i])
                 }
             }
-            else if(sojourn.distribution=="nbinom") {       
+            else if(sojourn.distribution=="nbinom") {
                 new.model$d = matrix(nrow=M,ncol=J)
                 new.model$sojourn$size = numeric(J)
                 new.model$sojourn$shift = integer(J)
-                new.model$sojourn$mu = numeric(J)                            
-                new.model$sojourn$prob = numeric(J)                            
+                new.model$sojourn$mu = numeric(J)
+                new.model$sojourn$prob = numeric(J)
                 eta = matrix(estep_variables$eta,ncol=J)
-                for(i in 1:J) { 
-                    tmp = .fitnbinom(eta[,i])          
+                for(i in 1:J) {
+                    tmp = .fitnbinom(eta[,i])
                     new.model$sojourn$shift[i] = tmp[1]
                     new.model$sojourn$size[i] =  tmp[2]
                     new.model$sojourn$mu[i] =  tmp[3]
@@ -431,17 +431,17 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
                 new.model$d = matrix(estep_variables$eta,ncol=J)
                 new.model$sojourn$shape = numeric(J)
                 new.model$sojourn$scale = numeric(J)
-                for(i in 1:J) {           
+                for(i in 1:J) {
                     tmp = gammafit(1:M,wt=new.model$d[,i])
                     new.model$sojourn$shape[i] = tmp$shape
                     new.model$sojourn$scale[i] = tmp$scale
-                    new.model$d[,i] = dgamma(1:M,shape=tmp$shape,scale=tmp$scale)              
-                }          
+                    new.model$d[,i] = dgamma(1:M,shape=tmp$shape,scale=tmp$scale)
+                }
             }
             else if(sojourn.distribution=="logarithmic") {
                 new.model$d = apply(matrix(estep_variables$eta+1e-100,ncol=J),2,function(x) x/sum(x))
   	        new.model$sojourn$shape = numeric(J)
-                for(i in 1:J) {           
+                for(i in 1:J) {
                     new.model$sojourn$shape[i] = .logdistrfit(wt=new.model$d[,i])
                     new.model$d[,i] = .dlog(1:M,new.model$sojourn$shape[i])
                 }
@@ -451,14 +451,14 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
                 new.model$d = matrix(nrow=M,ncol=J)
   	        new.model$sojourn$meanlog = numeric(J)
   	        new.model$sojourn$s.dlog = numeric(J)
-                for(i in 1:J) {           
+                for(i in 1:J) {
                     new.model$sojourn$meanlog[i] = weighted.mean(log(1:M),eta[,i])
                     new.model$sojourn$s.dlog[i] = sqrt(cov.wt(data.frame(log(1:M)),eta[,i])$cov)
                     new.model$d[,i] = dlnorm(1:M,new.model$sojourn$meanlog[i],new.model$sojourn$s.dlog[i])
-                    new.model$d[,i] = new.model$d[,i]/sum(new.model$d[,i])              
+                    new.model$d[,i] = new.model$d[,i]/sum(new.model$d[,i])
                 }
             }
-            else stop("Invalid sojourn distribution")         
+            else stop("Invalid sojourn distribution")
             new.model$D = apply(new.model$d,2,function(x) rev(cumsum(rev(x))))
         }
 
@@ -477,9 +477,9 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
         ll[it]=sum(log(estep_variables$N))
         new.model$J = J
         if(it>2) if(abs(ll[it]-ll[it-1])<tol) break()
-        
+
     } #end iterations of EM algorithm
-    
+
     class(new.model) <- "hsmmspec"
     ret = list(loglik=ll[!is.na(ll)],
                model=new.model,
@@ -490,7 +490,7 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
                f=f,
                mstep=mstep,
                yhat=apply(matrix(estep_variables$gamma,ncol=J),1,which.max))
-    
+
     class(ret) <- "hsmm"
     ret
 }
@@ -515,7 +515,7 @@ predict.hsmm <- function(object,newdata,method="viterbi",...) {
     statehat = integer(NROW(x))
     statehat=NA
     if(method=="viterbi") {
-        M = nrow(object$model$d)    
+        M = nrow(object$model$d)
         loga = as.double(log(object$model$transition))
         loga[loga==-Inf]=m
         logstart = as.double(log(object$model$init))
@@ -538,12 +538,12 @@ predict.hsmm <- function(object,newdata,method="viterbi",...) {
                      d=as.double(d),
                      D=as.double(D),
                      timelength=as.integer(N[i]),
-                     J=as.integer(J), 
+                     J=as.integer(J),
                      M=as.integer(rep(M,J)),
                      alpha = double(N[i]*J),
                      statehat=integer(N[i]),
                      psi_state0=integer(N[i]*J),
-                     psi_time0=integer(N[i]*J)          
+                     psi_time0=integer(N[i]*J)
                     ,PACKAGE='mhsmm')
             print(range(b))
             print(head(    tmp$alpha ))
@@ -554,29 +554,29 @@ predict.hsmm <- function(object,newdata,method="viterbi",...) {
         ans <- list(x=x,s=statehat,N=N,loglik=loglik)
     }
     else if(method=="smoothed") {
-        M = nrow(object$model$d)    
+        M = nrow(object$model$d)
         m <- object$model
         m$dens.emission <- object$f
         tmp <- hsmmfit(x,m,object$mstep,maxit=1,M=M)
         ans <- list(x=x$x,s=tmp$yhat,N=x$N,p=matrix(tmp$estep_variables$gamma,ncol=object$J))
     }
     else stop(paste("Unavailable prediction method",method))
-    
-    class(ans) <- 'hsmm.data'  
+
+    class(ans) <- 'hsmm.data'
     ans
                                         # tmp
 }
 
 
-.add.states <- function(states,ht=0,greyscale=FALSE,leg=NA,J=length(unique(states)),time.scale=24,shift=0) {  
-    J = length(unique(states))  
+.add.states <- function(states,ht=0,greyscale=FALSE,leg=NA,J=length(unique(states)),time.scale=24,shift=0) {
+    J = length(unique(states))
 
     if(greyscale) cols=c("#FFFFFF" ,"#F0F0F0" ,"#D9D9D9", "#BDBDBD" ,"#969696", "#737373", "#525252", "#252525")
-    else cols = c("#66C2A5","#FC8D62","#8DA0CB","#E78AC3","#A6D854","#FFD92F","#E5C494","#B3B3B3") #kind regards to RBrewerPal for these values  
+    else cols = c("#66C2A5","#FC8D62","#8DA0CB","#E78AC3","#A6D854","#FFD92F","#E5C494","#B3B3B3") #kind regards to RBrewerPal for these values
 
     hats = rle(states)
     hats = list(intervals=cumsum(c(0,hats$lengths))/time.scale+shift,state=hats$values)
-    for(ii in 1:length(hats$state)) 
+    for(ii in 1:length(hats$state))
         if(greyscale)  rect(hats$intervals[ii],ht,hats$intervals[ii+1],ht+(axTicks(2)[2]-axTicks(2)[1])/5,col=cols[hats$state[ii]],border=1)
         else rect(hats$intervals[ii],ht,hats$intervals[ii+1],ht+(axTicks(2)[2]-axTicks(2)[1])/5,col=cols[hats$state[ii]],border=cols[hats$state[ii]])
     if(any(!is.na(leg))) legend("topleft",legend=leg,fill=cols,bg="white")
@@ -585,7 +585,7 @@ predict.hsmm <- function(object,newdata,method="viterbi",...) {
 
 summary.hsmm <- function(object,...) {
     cat("\nStarting distribution = \n")
-    print(object$model$init,2)	
+    print(object$model$init,2)
     cat("\nTransition matrix = \n")
     print(object$model$transition,2)
     cat("\nSojourn distribution parameters = \n")
@@ -603,6 +603,5 @@ predict.hsmmspec <- function(object,newdata,method="viterbi",M=NA,...) {
     model <- .build_d(object,M)
     object2 <- list(model=model,J=model$J,f=model$dens.emission)
     class(object2) <- "hsmm"
-    predict(object2,newdata,method)    
+    predict(object2,newdata,method)
 }
-
