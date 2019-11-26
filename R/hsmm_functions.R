@@ -337,7 +337,6 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
     for(it in 1:maxit) {
         if(graphical)   plot.hsmm(list(model=new.model,J=J))
         p = sapply(1:J,function(state) f(x,state,new.model))
-        print(range(p))
         if(any(is.na(p)|p==Inf)) stop("NAs detected in b(x), check your supplied density function")
         if(any(apply(p,1,max)==0)) stop("Some values have 0 pdf for all states!  Check your model parameters")
 
@@ -545,9 +544,6 @@ predict.hsmm <- function(object,newdata,method="viterbi",...) {
                      psi_state0=integer(N[i]*J),
                      psi_time0=integer(N[i]*J)
                     ,PACKAGE='mhsmm')
-            print(range(b))
-            print(head(    tmp$alpha ))
-            print(tail(    tmp$alpha ))
             loglik=loglik+max(tmp$alpha[N[i]*(1:J)])
             statehat[(NN[i]+1):NN[i+1]] = tmp$statehat+1
         }
