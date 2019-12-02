@@ -63,6 +63,7 @@ print.hsmmspec <- function(x, ...){
     if(length(object$init)!=NROW(object$transition))    stop('length(init)!=NROW(transition)')
     if(NROW(object$transition)!=NCOL(object$transition)) stop('NROW(transition)!=NCOL(transition)')
     if(!isTRUE(all.equal(sum(diag(object$transition)),0))) stop('non-zero entry on diagonal of transition matrix')
+    if(!isTRUE(all.equal(rowSums(object$transition),rep(1,object$J)))) stop("Row of transition matrix did not sum to one.")
 }
 
 hsmmspec <- function(init,transition,parms.emission,sojourn,dens.emission,rand.emission=NULL,mstep=NULL) {
