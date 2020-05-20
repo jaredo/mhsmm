@@ -208,7 +208,7 @@ gammafit <- function(x,wt=NULL) {
     s = log(xhat) - mean(weighted.mean(log(x),wt))
     aold = (xhat/xs)^2
     a = Inf
-    while(abs(a-aold)>tol) {
+    while(abs( (a-aold)/aold )>tol) {
         a = aold - (log(aold) - digamma(aold) - s)/((1/aold) - trigamma(aold))
         aold=a
     }
@@ -476,7 +476,7 @@ hsmmfit <- function(x,model,mstep=NULL,M=NA,maxit=100,lock.transition=FALSE,lock
 
         ll[it]=sum(log(estep_variables$N))
         new.model$J = J
-        if(it>2) if(abs(ll[it]-ll[it-1])<tol) break()
+        if(it>1 && abs( (ll[it]-ll[it-1])/ll[it]-ll[it-1] )<tol) break()
 
     } #end iterations of EM algorithm
 
