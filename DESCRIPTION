@@ -14,3 +14,4 @@ Depends: mvtnorm
 Repository: CRAN
 Encoding: latin1
 NeedsCompilation: yes
+Suggests: tinytest

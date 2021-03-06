@@ -10,33 +10,33 @@ plot.hsmm <- function(x,...) {
 plot.hsmm.data <- function(x,...) {
   	plot(ts(x$x),...)
  	  if(!is.null(x$s)) .add.states(x$s,ht=axTicks(2)[1],time.scale=1)
-  	if(length(x$N)>1) abline(v=cumsum(x$N),lty=2) 	  
+  	if(length(x$N)>1) abline(v=cumsum(x$N),lty=2)
 }
 
-addStates <- function (states,x=NULL,ybot = axTicks(2)[1], ytop=ybot + (axTicks(2)[2] - axTicks(2)[1])/5,dy  = ytop - ybot,greyscale = FALSE, leg = NA, 
-                J = length(unique(states)), time.scale = 1, shiftx = 0) 
+addStates <- function (states,x=NULL,ybot = axTicks(2)[1], ytop=ybot + (axTicks(2)[2] - axTicks(2)[1])/5,dy  = ytop - ybot,greyscale = FALSE, leg = NA,
+                J = length(unique(states)), time.scale = 1, shiftx = 0)
 {
 
   draw.it <- function(hats, ybot, ytop, cols, greyscale){
     ##cat("ybot", ybot, "ytop", ytop, "\n")
     for (ii in 1:length(hats$state)){
-      if (greyscale) { 
+      if (greyscale) {
         rect(xleft   = hats$intervals[ii],
              ybottom = ybot,
-             xright  = hats$intervals[ii + 1], 
+             xright  = hats$intervals[ii + 1],
              ytop    = ytop,
              col = cols[hats$state[ii]], border = 1)
       } else {
         rect(xleft   = hats$intervals[ii],
              ybottom = ybot,
-             xright  = hats$intervals[ii + 1], 
+             xright  = hats$intervals[ii + 1],
              ytop    = ytop,
              col = cols[hats$state[ii]], border = cols[hats$state[ii]])
       }
     }
   }
 
-  
+
   if (is.null(states)){
     states <- x
     if (!is.list(states))
@@ -45,9 +45,9 @@ addStates <- function (states,x=NULL,ybot = axTicks(2)[1], ytop=ybot + (axTicks(
   } else {
     if (!is.list(states))
       states <- list(states)
-    if(is.null(x)) x <- seq_along(states[[1]])        
+    if(is.null(x)) x <- seq_along(states[[1]])
   }
-  
+
 ##   cat("states:\n");
 ##   print(states)
 ##   cat("x:\n");
@@ -55,9 +55,9 @@ addStates <- function (states,x=NULL,ybot = axTicks(2)[1], ytop=ybot + (axTicks(
 
   x <- as.numeric(x)
   rr  <- range(x)
-  
+
   J = length(unique(states))
-  if (greyscale) { 
+  if (greyscale) {
     cols <- c("#FFFFFF", "#F0F0F0", "#D9D9D9", "#BDBDBD", "#969696", "#737373", "#525252", "#252525")
   } else {
     cols <- c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3")
@@ -80,7 +80,21 @@ addStates <- function (states,x=NULL,ybot = axTicks(2)[1], ytop=ybot + (axTicks(
     ybot <- ytop + .2*dy
     ytop <- ybot + dy
   }
-  
-  if (any(!is.na(leg))) 
+
+  if (any(!is.na(leg)))
     legend("topleft", legend = leg, fill = cols, bg = "white")
+}
+
+plot.sojourn <- function(m,xlim=c(0,1000) ) {
+    D <- matrix(nrow=xlim[2],ncol=m$J)
+    xhat <- seq(xlim[1],xlim[2])
+    if(m$sojourn$type=='gamma') {
+        for(i in 1:m$J) {
+            D[,i] <- with(m$sojourn,dgamma(xhat,shape[i],1/scale[i]))
+        }
+    } else if(m$sojourn$type=='nonparametric') {
+        D <- m$sojourn$d
+    }
+    plot(1:NROW(D),D[,1],type='s')
+    for(i in 1:NCOL(D))  lines(1:NROW(D),D[,i],type='s',col=i)
 }
